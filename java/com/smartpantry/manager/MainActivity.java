@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
+  
     private void showComingSoon(String screenName) {
         Toast.makeText(this, screenName + " coming soon", Toast.LENGTH_SHORT).show();
     }
