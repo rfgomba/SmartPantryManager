@@ -1,12 +1,15 @@
 package com.smartpantry.manager;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,19 +29,24 @@ public class MainActivity extends AppCompatActivity {
                 int itemId = item.getItemId();
 
                 if (itemId == R.id.nav_pantry) {
-                    // Current Home View (Pantry List)
+                    // Current home view (Pantry List)
                     return true;
                 } else if (itemId == R.id.nav_suggestions) {
-                    Intent intent = new Intent(MainActivity.this, SuggestedRecipesActivity.class);
-                    startActivity(intent);
-                    return true;
+                    // open SuggestedRecipesActivity via Intent
+                    showComingSoon("Suggested Recipes");
+                    return false;
                 } else if (itemId == R.id.nav_settings) {
-                    Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-                    startActivity(intent);
-                    return true;
+                    // open SettingsActivity via Intent
+                    showComingSoon("Settings");
+                    return false;
                 }
                 return false;
             }
         });
+    }
+
+
+    private void showComingSoon(String screenName) {
+        Toast.makeText(this, screenName + " coming soon", Toast.LENGTH_SHORT).show();
     }
 }
