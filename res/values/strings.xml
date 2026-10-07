@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Smart Pantry Manager</string>
+    <string name="title_my_pantry">My Pantry</string>
+    <string name="empty_pantry">Your pantry is empty.\nTap + to add your first ingredient.</string>
+    <string name="add_ingredient">Add ingredient</string>
+    <string name="delete_ingredient">Delete ingredient</string>
 </resources>
