@@ -1,5 +1,6 @@
 package com.smartpantry.manager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,7 +21,7 @@ import com.smartpantry.manager.model.PantryItem;
 import java.util.List;
 
 /**
- * Shows all pantry items from the SQLite database
+ * Pantry List screen (home). Shows all pantry items from the SQLite database
  * in a RecyclerView, plus the bottom navigation bar and the + button.
  */
 public class MainActivity extends AppCompatActivity implements PantryAdapter.OnPantryItemListener {
@@ -68,9 +69,10 @@ public class MainActivity extends AppCompatActivity implements PantryAdapter.OnP
             }
         });
 
-        // Add button: opens Add Ingredient screen 
+        // Add button: explicit Intent opens the Add Ingredient screen
         FloatingActionButton fabAddItem = findViewById(R.id.fabAddItem);
-        fabAddItem.setOnClickListener(v -> showComingSoon("Add Ingredient"));
+        fabAddItem.setOnClickListener(v ->
+                startActivity(new Intent(MainActivity.this, AddEditItemActivity.class)));
     }
 
     /**
@@ -104,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements PantryAdapter.OnP
 
     @Override
     public void onDeleteClick(PantryItem item) {
-       
+        
         showComingSoon("Delete " + item.getName());
     }
 
