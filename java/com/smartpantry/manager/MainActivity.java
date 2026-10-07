@@ -8,6 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,10 +21,7 @@ import com.smartpantry.manager.model.PantryItem;
 
 import java.util.List;
 
-/**
- * Pantry List screen (home). Shows all pantry items from the SQLite database
- * in a RecyclerView, plus the bottom navigation bar and the + button.
- */
+
 public class MainActivity extends AppCompatActivity implements PantryAdapter.OnPantryItemListener {
 
     private BottomNavigationView bottomNavigationView;
@@ -98,16 +96,27 @@ public class MainActivity extends AppCompatActivity implements PantryAdapter.OnP
 
     // ---------- Row taps from the adapter ----------
 
+    /** UPDATE: open the same form in Edit mode, passing the item id in the Intent. */
     @Override
     public void onItemClick(PantryItem item) {
-        
-        showComingSoon("Edit " + item.getName());
+        Intent intent = new Intent(MainActivity.this, AddEditItemActivity.class);
+        intent.putExtra("itemId", item.getId());
+        startActivity(intent);
     }
 
+    /** DELETE: ask for confirmation first, then remove from SQLite. */
     @Override
     public void onDeleteClick(PantryItem item) {
-        
-        showComingSoon("Delete " + item.getName());
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.delete_title)
+                .setMessage(getString(R.string.delete_message, item.getName()))
+                .setPositiveButton(R.string.delete, (dialog, which) -> {
+                    db.deletePantryItem(item.getId());
+                    Toast.makeText(this, getString(R.string.item_deleted, item.getName()),
+                            Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
     }
 
     private void showComingSoon(String screenName) {

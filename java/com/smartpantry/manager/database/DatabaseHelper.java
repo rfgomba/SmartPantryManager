@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  * SQLite database helper for the Smart Pantry Manager.
- * Creates the database on first use and provides methods to save and load data.
+ * Creates the database on first use and provides full CRUD for pantry items.
  * The data is stored in a file on the device, so it survives closing the app.
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -74,13 +74,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public long addPantryItem(PantryItem item) {
         SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COL_NAME, item.getName().trim());
-        values.put(COL_QUANTITY, item.getQuantity());
-        values.put(COL_UNIT, item.getUnit());
-        values.put(COL_EXPIRY, item.hasExpiryDate() ? item.getExpiryDate() : null);
-
-        long newId = db.insert(TABLE_PANTRY, null, values);
+        long newId = db.insert(TABLE_PANTRY, null, toContentValues(item));
         item.setId(newId);
         return newId;
     }
@@ -119,6 +113,47 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         } finally {
             cursor.close();
         }
+    }
+
+    // =========================================================
+    // UPDATE
+    // =========================================================
+
+    /**
+     * Saves changes to an existing item (matched by its id).
+     * @return number of rows changed (1 = success, 0 = item not found)
+     */
+    public int updatePantryItem(PantryItem item) {
+        SQLiteDatabase db = getWritableDatabase();
+        return db.update(TABLE_PANTRY, toContentValues(item),
+                COL_ID + " = ?", new String[]{String.valueOf(item.getId())});
+    }
+
+    // =========================================================
+    // DELETE
+    // =========================================================
+
+    /**
+     * Removes one item by id.
+     * @return number of rows deleted (1 = success, 0 = item not found)
+     */
+    public int deletePantryItem(long id) {
+        SQLiteDatabase db = getWritableDatabase();
+        return db.delete(TABLE_PANTRY, COL_ID + " = ?", new String[]{String.valueOf(id)});
+    }
+
+    // =========================================================
+    // Helpers
+    // =========================================================
+
+    /** Converts a PantryItem into column/value pairs for insert and update. */
+    private ContentValues toContentValues(PantryItem item) {
+        ContentValues values = new ContentValues();
+        values.put(COL_NAME, item.getName().trim());
+        values.put(COL_QUANTITY, item.getQuantity());
+        values.put(COL_UNIT, item.getUnit());
+        values.put(COL_EXPIRY, item.hasExpiryDate() ? item.getExpiryDate() : null);
+        return values;
     }
 
     /** Converts the current cursor row into a PantryItem object. */
