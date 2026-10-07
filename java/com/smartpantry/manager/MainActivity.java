@@ -1,28 +1,48 @@
 package com.smartpantry.manager;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
+import com.smartpantry.manager.adapter.PantryAdapter;
 import com.smartpantry.manager.database.DatabaseHelper;
 import com.smartpantry.manager.model.PantryItem;
 
+import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+/**
+ * Shows all pantry items from the SQLite database
+ * in a RecyclerView, plus the bottom navigation bar and the + button.
+ */
+public class MainActivity extends AppCompatActivity implements PantryAdapter.OnPantryItemListener {
 
     private BottomNavigationView bottomNavigationView;
+    private RecyclerView recyclerPantry;
+    private TextView textEmptyPantry;
+    private PantryAdapter pantryAdapter;
+    private DatabaseHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        db = DatabaseHelper.getInstance(this);
+
+        // List setup: the adapter turns PantryItem objects into rows
+        recyclerPantry = findViewById(R.id.recyclerPantry);
+        textEmptyPantry = findViewById(R.id.textEmptyPantry);
+        pantryAdapter = new PantryAdapter(this);
+        recyclerPantry.setAdapter(pantryAdapter);
 
         bottomNavigationView = findViewById(R.id.bottomNavigation);
         bottomNavigationView.setSelectedItemId(R.id.nav_pantry);
@@ -48,20 +68,45 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Add button: opens Add Ingredient screen (built in Phase 6)
+        // Add button: opens Add Ingredient screen 
         FloatingActionButton fabAddItem = findViewById(R.id.fabAddItem);
         fabAddItem.setOnClickListener(v -> showComingSoon("Add Ingredient"));
-
-        // TEMP TEST (Phase 4): check the database saves and reads. Removed in Phase 5.
-        DatabaseHelper db = DatabaseHelper.getInstance(this);
-        if (db.getAllPantryItems().isEmpty()) {
-            db.addPantryItem(new PantryItem("Tomato", 4, "pcs", null));
-        }
-        for (PantryItem p : db.getAllPantryItems()) {
-            Log.d("DB_TEST", p.getId() + ": " + p.getName() + " - " + p.getDisplayQuantity());
-        }
     }
 
+    /**
+     * Runs every time this screen comes back into view (lifecycle),
+     * so the list always reflects the latest database contents.
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bottomNavigationView.setSelectedItemId(R.id.nav_pantry);
+        loadPantryItems();
+    }
+
+    /** Reads all items from SQLite and shows either the list or the empty message. */
+    private void loadPantryItems() {
+        List<PantryItem> items = db.getAllPantryItems();
+        pantryAdapter.setItems(items);
+
+        boolean isEmpty = items.isEmpty();
+        textEmptyPantry.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+        recyclerPantry.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
+    }
+
+    // ---------- Row taps from the adapter ----------
+
+    @Override
+    public void onItemClick(PantryItem item) {
+        
+        showComingSoon("Edit " + item.getName());
+    }
+
+    @Override
+    public void onDeleteClick(PantryItem item) {
+       
+        showComingSoon("Delete " + item.getName());
+    }
 
     private void showComingSoon(String screenName) {
         Toast.makeText(this, screenName + " coming soon", Toast.LENGTH_SHORT).show();
