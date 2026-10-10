@@ -17,11 +17,17 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
 import com.smartpantry.manager.adapter.PantryAdapter;
 import com.smartpantry.manager.database.DatabaseHelper;
+import com.smartpantry.manager.database.RecipeSeeder;
 import com.smartpantry.manager.model.PantryItem;
+import com.smartpantry.manager.utils.AppSettings;
 
 import java.util.List;
 
-
+/**
+ * Pantry List screen (home). Shows all pantry items from the SQLite database
+ * in a RecyclerView, plus the bottom navigation bar and the + button.
+ * Tap a row to edit it; tap the bin icon to delete it.
+ */
 public class MainActivity extends AppCompatActivity implements PantryAdapter.OnPantryItemListener {
 
     private BottomNavigationView bottomNavigationView;
@@ -36,6 +42,9 @@ public class MainActivity extends AppCompatActivity implements PantryAdapter.OnP
         setContentView(R.layout.activity_main);
 
         db = DatabaseHelper.getInstance(this);
+
+        // First run only: pre-load the recipe collection into SQLite
+        RecipeSeeder.seedIfEmpty(db);
 
         // List setup: the adapter turns PantryItem objects into rows
         recyclerPantry = findViewById(R.id.recyclerPantry);
@@ -55,12 +64,12 @@ public class MainActivity extends AppCompatActivity implements PantryAdapter.OnP
                     // Current home view (Pantry List)
                     return true;
                 } else if (itemId == R.id.nav_suggestions) {
-                    // open SuggestedRecipesActivity via Intent
-                    showComingSoon("Suggested Recipes");
+                    // Explicit Intent opens the Suggested Recipes screen
+                    startActivity(new Intent(MainActivity.this, SuggestedRecipesActivity.class));
                     return false;
                 } else if (itemId == R.id.nav_settings) {
-                    // open SettingsActivity via Intent
-                    showComingSoon("Settings");
+                    // Explicit Intent opens the Settings screen
+                    startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                     return false;
                 }
                 return false;
@@ -75,12 +84,14 @@ public class MainActivity extends AppCompatActivity implements PantryAdapter.OnP
 
     /**
      * Runs every time this screen comes back into view (lifecycle),
-     * so the list always reflects the latest database contents.
+     * so the list always reflects the latest database contents and settings.
      */
     @Override
     protected void onResume() {
         super.onResume();
         bottomNavigationView.setSelectedItemId(R.id.nav_pantry);
+        pantryAdapter.setExpiryHighlight(
+                AppSettings.isHighlightExpiring(this), AppSettings.getWarnDays(this));
         loadPantryItems();
     }
 
@@ -100,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements PantryAdapter.OnP
     @Override
     public void onItemClick(PantryItem item) {
         Intent intent = new Intent(MainActivity.this, AddEditItemActivity.class);
-        intent.putExtra("itemId", item.getId());
+        intent.putExtra(AddEditItemActivity.EXTRA_ITEM_ID, item.getId());
         startActivity(intent);
     }
 
@@ -112,14 +123,11 @@ public class MainActivity extends AppCompatActivity implements PantryAdapter.OnP
                 .setMessage(getString(R.string.delete_message, item.getName()))
                 .setPositiveButton(R.string.delete, (dialog, which) -> {
                     db.deletePantryItem(item.getId());
+                    loadPantryItems(); // refresh the list so the item disappears now
                     Toast.makeText(this, getString(R.string.item_deleted, item.getName()),
                             Toast.LENGTH_SHORT).show();
                 })
                 .setNegativeButton(R.string.cancel, null)
                 .show();
-    }
-
-    private void showComingSoon(String screenName) {
-        Toast.makeText(this, screenName + " coming soon", Toast.LENGTH_SHORT).show();
     }
 }

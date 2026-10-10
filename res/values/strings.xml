@@ -48,4 +48,44 @@
         <item>tbsp</item>
         <item>cup</item>
     </string-array>
+
+    <!-- Suggested Recipes screen -->
+    <string name="title_suggested_recipes">Suggested Recipes</string>
+    <string name="header_ready_to_cook">Ready to cook (%1$d)</string>
+    <string name="no_matches">No recipes match your pantry yet - add more ingredients.</string>
+    <string name="recipe_meta">%1$d min • %2$d ingredients</string>
+    <string name="recipe_missing">Missing: %1$s</string>
+    <string name="header_almost_there">Almost there - missing 1 ingredient (%1$d)</string>
+    <string name="almost_there_note">Not suggestions: each recipe below still needs one more ingredient.</string>
+    <!-- Recipe Detail screen -->
+    <string name="title_recipe_detail">Recipe</string>
+    <string name="recipe_prep">Prep time: %1$d min</string>
+    <string name="header_ingredients">Ingredients</string>
+    <string name="header_method">Method</string>
+    <string name="status_can_cook">You have everything you need for this recipe.</string>
+    <string name="status_missing">You are missing %1$d ingredient(s) for this recipe.</string>
+    <string name="ingredient_have">✓  %1$s</string>
+    <string name="ingredient_missing">✗  %1$s (missing)</string>
+    <string name="step_format">%1$d. %2$s</string>
+    <string name="error_recipe_not_found">That recipe could not be found</string>
+    <!-- Pantry list expiry labels -->
+    <string name="expires_on">Expires: %1$s</string>
+    <string name="expires_today">Expires today: %1$s</string>
+    <string name="expires_soon">Expires soon: %1$s</string>
+    <string name="expired_on">Expired: %1$s</string>
+
+    <!-- Settings screen -->
+    <string name="title_settings">Settings</string>
+    <string name="section_matching">Recipe matching</string>
+    <string name="setting_exclude_expired">Ignore expired ingredients when suggesting recipes</string>
+    <string name="setting_show_almost_there">Show Almost There recipes (missing only 1 ingredient)</string>
+    <string name="section_expiry">Expiry alerts</string>
+    <string name="setting_highlight_expiring">Highlight ingredients that expire soon</string>
+    <string name="setting_warn_days">Warn me %1$d day(s) before expiry</string>
+    <string name="section_data">Data</string>
+    <string name="data_info">Database: SQLite, stored on this device\n%1$d recipes, %2$d pantry items</string>
+    <string name="clear_pantry">Clear all pantry items</string>
+    <string name="clear_pantry_title">Clear pantry?</string>
+    <string name="clear_pantry_message">This deletes every ingredient in your pantry. Recipes are kept. This cannot be undone.</string>
+    <string name="clear_pantry_done">Pantry cleared</string>
 </resources>
