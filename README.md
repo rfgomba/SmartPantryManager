@@ -1,8 +1,8 @@
 # Smart Pantry Manager
 
-Author: Raymond Fainos Gomba
-Student number: 402411318
-Module: Mobile App Development 700, Richfield Graduate Institute of Technology
+- Author: Raymond Fainos Gomba
+- Student number: 402411318
+- Module: Mobile App Development 700, Richfield Graduate Institute of Technology
 
 A Java Android app that helps reduce food waste. You record the ingredients you have at home, and the app suggests recipes you can cook using only those ingredients, with no shopping trip needed.
 
